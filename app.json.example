@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Dice-O",
+    "slug": "random-orienteering",
+    "version": "0.8.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.calvinballing.treasurehunt",
+      "buildNumber": "1.0.0"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "android": {
+      "package": "com.calvinballing.treasurehunt",
+      "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "API_KEY_GOES_HERE"
+        }
+      }
+    }
+  }
+}

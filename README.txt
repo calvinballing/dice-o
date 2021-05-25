@@ -1,0 +1,1 @@
+The app.json.example file should be replaced with an app.json file.  In the updated version of the file, you will need to replace the Google Maps API Key (`API_KEY_GOES_HERE`) with your own key.

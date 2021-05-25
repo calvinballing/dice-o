@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   id="svg2302"
+   width="100"
+   height="100"
+   viewBox="0 0 100 100">
+  <metadata
+     id="metadata2308">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2306">
+    <marker
+       style="overflow:visible"
+       id="Arrow2Sstart"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(0.3,0,0,0.3,-0.69,0)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         id="path4039" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow2Send"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(-0.3,0,0,-0.3,0.69,0)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         id="path4042" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Sstart"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(0.2,0,0,0.2,1.2,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path4021" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow2Mend"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="scale(-0.6)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         id="path4036" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lend"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path4012" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow2Lstart"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <path
+         transform="matrix(1.1,0,0,1.1,1.1,0)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.625;stroke-linejoin:round;stroke-opacity:1"
+         id="path4027" />
+    </marker>
+    <rect
+       id="rect3828"
+       height="349.78571"
+       width="339.76321"
+       y="57.128326"
+       x="-48.108063" />
+  </defs>
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:0.5;stroke:none;stroke-width:0.421004"
+     id="rect2336"
+     width="100"
+     height="100"
+     x="0"
+     y="0"
+     ry="16.887417" />
+  <circle
+     r="44.231518"
+     cy="50"
+     cx="50"
+     id="path3832"
+     style="opacity:1;fill:none;stroke:#000000;stroke-width:2.42545;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     id="path2220"
+     d="m 37.937309,81.983425 c -1.368898,0.0035 -4.270694,-2.035311 -4.921403,-4.280771 -0.07321,-0.252623 -0.145862,-0.704959 -0.19408,-1.000693 -2.432324,-14.917777 -6.607991,-39.953469 -6.835745,-41.542132 5.770016,-1.420139 44.674782,-0.566483 47.998488,0.0077 -1.356582,11.286576 -5.921396,32.944414 -8.16282,42.61824 -0.299251,1.291549 -1.417865,4.141275 -3.926781,4.199586 -0.524058,0.01218 -22.887416,-0.03145 -23.957653,-0.0023 -1.03e-4,2e-6 -6e-6,3.11e-4 -6e-6,3.11e-4 z M 42.67764,73.157601 C 42.521039,71.340385 40.10541,44.722947 39.942335,43.48658 c -0.311822,-2.364119 -4.155312,-1.959064 -3.940577,0.05473 0.123479,1.157998 2.790656,27.237432 3.054229,29.00707 0.459541,3.085386 3.73153,1.88424 3.621653,0.609219 z m 9.305358,-0.718686 c -0.0099,-1.0196 0.02913,-26.2446 -0.02885,-28.708993 -0.06018,-2.557867 -3.949899,-2.223602 -3.966478,-0.147311 -0.02356,2.95089 0.02301,27.201451 0,28.856304 -0.04712,3.388549 4.021238,2.664371 3.995328,0 z m 8.757184,0.109465 3.228756,-29.007059 c 0.25433,-2.284897 -3.707478,-2.152903 -3.940584,-0.05473 l -3.228756,29.061802 c -0.35567,3.201359 3.648744,2.621864 3.940584,-1.1e-5 z M 22.965855,29.922983 c -0.326567,-0.120399 -0.642791,-0.392201 -0.810881,-0.696968 l -0.164193,-0.297694 c -0.05271,-1.751087 -0.05648,-3.860124 0.313971,-5.292867 0.2318,-0.467637 0.832129,-1.064631 1.300582,-1.293345 5.680214,-0.655704 7.678918,-0.336159 15.375249,-0.33705 l 0.68417,-1.354574 c 0.459014,-0.9088 0.764802,-1.446329 0.929192,-1.63339 0.300535,-0.341974 0.817788,-0.683592 1.291324,-0.852832 l 0.355746,-0.127151 c 5.14021,0.02336 10.289562,-0.08752 15.425605,0.03142 0.5533,0.09206 1.181747,0.426366 1.600565,0.85142 0.304986,0.309517 0.41469,0.491899 1.032094,1.715718 l 0.690844,1.369381 c 4.92805,0.413266 10.888245,-0.746384 15.375242,0.337049 0.468447,0.228714 1.068783,0.825707 1.300583,1.293345 0.540557,2.159728 0.33313,2.83177 0.313976,5.292867 l -0.161402,0.291361 c -0.18453,0.333114 -0.464544,0.576707 -0.798316,0.694468 -19.030038,-0.24251 -31.090011,-9.35e-4 -54.054331,0.0089 z"
+     style="fill:#000000;stroke-width:0.0547304" />
+</svg>

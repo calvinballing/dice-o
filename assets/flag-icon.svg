@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 99.999997 99.999997"
+   height="100"
+   width="100"
+   id="svg4666"
+   version="1.1">
+  <metadata
+     id="metadata4672">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs4670" />
+  <g
+     id="g925"
+     transform="translate(-2.2081089,-1.5109196)">
+    <g
+       id="g910">
+      <path
+         d="M 21.459032,88.529048 34.999225,12.360659 c 15.83122,-7.2594808 35.724564,3.503926 54.317084,6.59932 L 82.591565,58.375161 C 66.466335,53.366761 48.213093,43.099249 30.615694,46.923862"
+         style="fill:none;stroke:#000000;stroke-width:6.62653;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+         id="rect843" />
+      <path
+         d="m 46.080303,27.382869 c 3.351057,0.297746 7.495047,1.130222 12.812327,2.957252 L 56.811677,46.585674 43.345402,44.256617 Z"
+         style="fill:#000000;stroke-width:15.726;stroke-linecap:round;stroke-linejoin:round"
+         id="rect858" />
+      <path
+         id="rect858-8"
+         style="fill:#000000;stroke-width:16.7091;stroke-linecap:round;stroke-linejoin:round"
+         d="m 71.70293,34.305743 c 4.323766,1.511691 8.579494,2.955344 12.470845,4.03462 L 81.354851,56.871059 69.364519,52.324065 Z" />
+      <path
+         id="rect858-2"
+         style="fill:#000000;stroke-width:17.6374;stroke-linecap:round;stroke-linejoin:round"
+         d="M 61.465563,11.808775 74.275864,14.965844 71.70293,34.305743 58.89263,30.340121 Z" />
+      <path
+         d="M 36.662904,9.477726 48.81723,10.912861 46.080303,27.382869 C 41.347472,26.653854 37.315528,27.067251 32.696024,27.587671 Z"
+         style="fill:#000000;stroke-width:17.6374;stroke-linecap:round;stroke-linejoin:round"
+         id="rect858-2-5" />
+    </g>
+  </g>
+</svg>
