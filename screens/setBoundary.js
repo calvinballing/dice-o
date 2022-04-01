@@ -23,24 +23,24 @@ export class SetBoundary extends Component {
 
     componentDidMount() {
         let context = this.context;
-        
+
         (async () => {
 
-            //TODO investigate whether we also need background permissions deprecated method: https://docs.expo.io/versions/latest/sdk/location/
-            //Also, may want to use Location.getLastKnownPositionAsync(options) on this scene, and wait until later to begin continuous checking
+            //let hasLocationServicesEnabled = await Location.hasServicesEnabledAsync();
+            //let hasGrantedForegroundPermissions = await Location.getForegroundPermissionsAsync()
 
-            let alreadyHasServicesEnabled = await Location.hasServicesEnabledAsync();
-
-            //console.log(alreadyHasServicesEnabled)
-
-            if (!alreadyHasServicesEnabled) {
+            //if (!hasLocationServicesEnabled || !hasGrantedForegroundPermissions) {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
                     this.setState({ errorMsg: strings.permissions.noLocation });
+                    return;
                 }
-            }
+            //}
 
-            let location = await Location.getCurrentPositionAsync({});
+            
+            let location = await Location.getLastKnownPositionAsync({});
+            //TODO consider checking getCurrentPositionAsync if last known position is too old
+            //TODO We may want to use this positio for now, and wait until later to begin continuous checking
 
             let newMapRegion = {
                 latitude: location.coords.latitude,
@@ -53,16 +53,18 @@ export class SetBoundary extends Component {
 
             Location.watchPositionAsync({
                 accuracy: Location.Accuracy.Highest,
-                distanceInterval: .75, //meters
-                timeInterval: 500, //milliseconds
+                distanceInterval: context.distanceIntervalInMeters, //meters
+                timeInterval: context.pollingIntervalInMilliseconds, //milliseconds
             }, location => {
                 if (location !== context.userLocation) {
                     context.updateUserLocation(location);
-                    if (context.userLocation && context.courseType == "Standard") {
-                        context.updateDistanceToNextControlInMeters(distance(location.coords.latitude, location.coords.longitude, context.controls[context.getNextControlToFindIndex()].coordinate.latitude, context.controls[context.getNextControlToFindIndex()].coordinate.longitude, "meters"));
-                    }
                 }
-            });
+            }).then((locationWatcher) => {
+                context.updateLocationWatcher(locationWatcher);
+              }).catch((err) => {
+                console.error(err)
+              })
+
 
             if (context.boundaryCoordinates[0] !== undefined) {
                 if (context.boundaryCoordinates[0].latitude == 0) {//TODO improve this. Is there a fit to coordinates method for MapView?
@@ -89,6 +91,14 @@ export class SetBoundary extends Component {
                 }
             }
         })();
+
+        context.storeData();
+    }
+
+    componentWillUnmount = () => {
+        if (this.context.locationWatcher) {
+        this.context.locationWatcher.remove()
+        }
     }
 
     getRegion = () => {
@@ -118,12 +128,30 @@ export class SetBoundary extends Component {
         context.updateBoundaryCoordinates(newBoundaryCoordinates);
     }
 
+    handleClearBoundaryCoordinatesPressed = () => {
+        let context = this.context;
+        if (context.boundaryCoordinates.length > 0) {
+            Alert.alert(
+                "Clear all boundary markers?",
+                "Are you sure you want to delete all the existing boundary markers?",
+                [{
+                    text: "Cancel",
+
+                    style: "cancel",
+                }, {
+                    text: "Clear All",
+                    style: "destructive",
+                    onPress: () => { this.clearBoundaryCoordinates() }
+                }],
+            )
+        }
+    }
+
     clearBoundaryCoordinates = () => {
         let context = this.context;
         context.updateBoundaryCoordinates([]);
         context.updateActiveBoundaryIndex(0);
     }
-
 
     setEditMode = (mode) => {
         this.setState({ editMode: mode });
@@ -162,22 +190,22 @@ export class SetBoundary extends Component {
 
         if (!this.state.mapRegion) {
             return (
-            <View style={styles.mapLoadingTextContainer}>
-            <Text 
-            style={{margin:20}}
-            //TODO replace this with and/or add a loader icon
-            >{strings.permissions.loading}</Text>
-                <Text style={{margin:20}}>
-                    {strings.permissions.loading2}
-                </Text>
-            </View>
+                <View style={styles.mapLoadingTextContainer}>
+                    <Text
+                        style={{ margin: 20 }}
+                    //TODO replace this with and/or add a loader icon
+                    >{strings.permissions.loading}</Text>
+                    <Text style={{ margin: 20 }}>
+                        {strings.permissions.loading2}
+                    </Text>
+                </View>
             );
         } else {
             return (
                 <AppContext.Consumer>
                     {state => (
                         <View >
-                            <MapView 
+                            <MapView
                                 style={styles.mapStyle}
                                 initialRegion={this.state.mapRegion}
                                 customMapStyle={context.customMapStyle}
@@ -267,10 +295,13 @@ export class SetBoundary extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            <View                                 style={styles.mapBottomContainer}                            >
+                            <View style={styles.mapBottomContainer}                            >
                                 <View style={{ width: "50%" }}>
                                     <TouchableOpacity
-                                        onPress={() => this.clearBoundaryCoordinates()}
+                                        onPress={() => {
+                                            this.handleClearBoundaryCoordinatesPressed()
+                                        }
+                                        }
                                         style={styles.button}
                                     >
                                         <Text style={styles.buttonText} >{strings.boundary.clearAll}</Text>

@@ -12,10 +12,12 @@ export const SetStartExplainer = ({ navigation, route }) => (
         <ScrollView>
             <ExplainerItem
                 icon={<MapControl controlType="Start" height="50" width="50" isIcon={true} />}
-                text="Tap anywhere on the map to place the Start there, or press and hold the triangle to drag the Start to a different location."
+                title={strings.explainer.setStartTitle}
+                text={strings.explainer.setStart}
             />
             <ExplainerItem
                 icon={<LayerIcon margin={0} />}
+                title={strings.explainer.layerTitle}
                 text={strings.explainer.layer}
             />
         </ScrollView>

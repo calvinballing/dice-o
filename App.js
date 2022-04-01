@@ -1,8 +1,10 @@
 import { createStackNavigator } from '@react-navigation/stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native'
 import React, { Component } from 'react';
 
-
+import { About } from './screens/about'
+import { colors } from './styles/styles';
 import { ControlLogged } from './screens/controlLogged'
 import { CourseType } from './screens/courseType'
 import { Disclaimer } from './screens/disclaimer'
@@ -11,7 +13,8 @@ import { Game } from './screens/game'
 import { GameExplainer } from './screens/gameExplainer'
 import { GameSettings } from './screens/gameSettings'
 import { ImportQR } from './screens/importQR'
-import { Results } from './screens/results'
+import { ResultsData } from './screens/resultsData'
+import { ResultsRoute } from './screens/resultsRoute'
 import { SetCourse } from './screens/setCourse'
 import { SetCourseExplainer } from './screens/setCourseExplainer'
 import { SetBoundary } from './screens/setBoundary'
@@ -21,12 +24,17 @@ import { SetFinishExplainer } from './screens/setFinishExplainer'
 import { SetStart } from './screens/setStart'
 import { SetStartExplainer } from './screens/setStartExplainer'
 import { Settings } from './screens/settings'
+import { SettingsAdvanced } from './screens/settingsAdvanced'
 import { Splash } from './screens/splash'
 import { strings } from './strings';
 import SettingsContext from './context';
 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const MainStack = createStackNavigator()
 const RootStack = createStackNavigator()
+const Tab = createBottomTabNavigator();
+
 
 if(Platform.OS === 'android') { // only android needs polyfill
   require('intl'); // import intl object
@@ -42,6 +50,11 @@ function MainStackScreen() {
     }}
     >
       <MainStack.Screen name={strings.header.home} options={{ headerShown: false }} component={Splash} />
+      <MainStack.Screen name={strings.header.about}
+        options={{
+          headerTitleAlign: "center",
+        }}
+        component={About} />
       <MainStack.Screen name={strings.header.disclaimer}
         options={{
           headerTitleAlign: "center",
@@ -117,10 +130,50 @@ function MainStackScreen() {
           //TODO: Still need to investigate blocking going back on the results screen with the native android back button
           //https://reactnavigation.org/docs/preventing-going-back
         }}
-        component={Results} />
+        component={ResultsTabNavigator} />
     </MainStack.Navigator>
   );
 }
+
+function ResultsTabNavigator() {
+  return (
+  <Tab.Navigator
+  tabBarOptions={{
+    activeTintColor: colors.orange,
+  }}>
+    <Tab.Screen
+        name="ResultsData"
+        options={{
+          title: strings.header.results,
+          headerLeft:null,
+          gestureEnabled: false,
+          tabBarLabel: strings.results.tabLabelData,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="table-large" color={color} size={size} />
+          ),
+                    //TODO: Still need to investigate blocking going back on the results screen with the native android back button
+          //https://reactnavigation.org/docs/preventing-going-back
+        }}
+        component={ResultsData} />
+        <Tab.Screen
+        name="ResultsRoute"
+        options={{
+          title: strings.header.results,
+          headerLeft:null,
+          gestureEnabled: false,
+          tabBarLabel: strings.results.tabLabelRoute,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="map-outline" color={color} size={size} />
+          ),
+          //TODO: Still need to investigate blocking going back on the results screen with the native android back button
+          //https://reactnavigation.org/docs/preventing-going-back
+        }}
+        component={ResultsRoute} />
+        
+      </Tab.Navigator>
+  )}
+
+
 
 class App extends Component {
   constructor(props) {
@@ -149,6 +202,11 @@ class App extends Component {
               options={{
                 headerShown: false,
               }}
+            />
+            <RootStack.Screen
+              name="SettingsAdvanced"
+              options={{ title: strings.header.settingsAdvanced,}}
+              component={SettingsAdvanced}
             />
             <RootStack.Screen
               name="SetBoundaryExplainer"
@@ -196,6 +254,9 @@ class App extends Component {
     )
   }
 }
+
+
+      
 
 export default App;
 

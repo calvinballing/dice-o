@@ -10,6 +10,9 @@ import { strings } from '../strings';
 export class ControlLogged extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            CTAhasBeenPressed:false,
+        }
     }
 
     componentDidMount() {
@@ -18,10 +21,13 @@ export class ControlLogged extends Component {
 
     handleOnPress() {
         let context = this.context
+        if (!this.state.CTAhasBeenPressed) {
+        this.setState({CTAhasBeenPressed:true});
         if (context.controls[this.props.route.params.controlIndex].controlType == "Finish") { //TODO fix
             this.props.navigation.navigate("Results")
         }
         else { this.props.navigation.pop() }
+    }
     }
 
     render() {
@@ -53,6 +59,7 @@ export class ControlLogged extends Component {
                 >
                     <TouchableOpacity
                         style={styles.buttonWithoutFixedHeight}
+                        disabled={this.state.CTAhasBeenPressed}
                         onPress={() => this.handleOnPress()}
                     >
                         <Text style={styles.buttonWithoutFixedHeightText}>

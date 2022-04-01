@@ -202,7 +202,10 @@ export class SetCourse extends Component {
         let scatterPhase;
         let doUpdateCoordinate;
 
-        for (entropyStep = 0; entropyStep < randomness; entropyStep++) {
+        let currentTotalDistanceDifferenceFromTargetInK = Infinity;
+
+        for (entropyStep = 0; entropyStep < randomness || (entropyStep < randomness * 10 && currentTotalDistanceDifferenceFromTargetInK > context.targetCourseLengthToleranceInK); entropyStep++) {
+
 
             scatterPhase = entropyStep < randomness / 4 && entropyStep < 100
 
@@ -211,6 +214,14 @@ export class SetCourse extends Component {
             randomlySelectedControlToMove = ~~((numberOfControls - 2) * rng()) + 1;//don't move start or finish
 
             let randomMovementDistancePercent = .1
+
+            if (entropyStep%10 == 0){
+                randomMovementDistancePercent = .2
+            }
+
+            if (entropyStep%9 == 0){
+                randomMovementDistancePercent = .05
+            }
 
             newLatitude = newControls[randomlySelectedControlToMove].coordinate.latitude + (rng() - .5) * randomMovementDistancePercent * context.getBoundaryWidth();
             newLongitude = newControls[randomlySelectedControlToMove].coordinate.longitude + (rng() - .5) * randomMovementDistancePercent * context.getBoundaryHeight();
@@ -386,26 +397,31 @@ export class SetCourse extends Component {
                             minimumAngleOfProposedLegsInDegrees = proposedAngleDifference;
                         }
 
-                        // console.log("angles")
+                        //if (entropyStep == 1999) {
+                            
+                            
+                          // console.log("angles")
+                            
+                           // console.log(index)
+                           // console.log(currentAngleToPriorControl)
+                           // console.log(currentAngleToNextControl)
+                           // console.log(currentAngleDifference)
+                            
+                           // console.log(proposedAngleToPriorControl)
+                           // console.log(proposedAngleToNextControl)
+                            
+                           // console.log("currentAngleViolations")
+                           // console.log(currentAngleViolations)
+                           // console.log("proposedAngleViolations")
+                           // console.log(proposedAngleViolations)
+                            
+                            // console.log("newControls")
+                            // console.log(newControls)
+                        //}
+                        })
+                    
 
-                        // console.log(currentControlID)
-                        // console.log(currentAngleToPriorControl)
-                        // console.log(currentAngleToNextControl)
-                        // console.log(currentAngleDifference)
-
-                        // console.log(proposedAngleToPriorControl)
-                        // console.log(proposedAngleToNextControl)
-
-                        // console.log("currentAngleViolations")
-                        // console.log(currentAngleViolations)
-                        // console.log("proposedAngleViolations")
-                        // console.log(proposedAngleViolations)
-
-                        // console.log("newControls")
-                        // console.log(newControls)
-                    })
-
-                    let currentTotalDistanceDifferenceFromTargetInK = Math.abs(currentTotalDistanceInK - context.targetCourseLengthInK)
+                    currentTotalDistanceDifferenceFromTargetInK = Math.abs(currentTotalDistanceInK - context.targetCourseLengthInK)
                     let proposedTotalDistanceDifferenceFromTargetInK = Math.abs(proposedTotalDistanceInK - context.targetCourseLengthInK)
 
                     let decreasesTotalDistanceDifferenceFromTarget = (proposedTotalDistanceDifferenceFromTargetInK < currentTotalDistanceDifferenceFromTargetInK)
@@ -444,7 +460,7 @@ export class SetCourse extends Component {
                         decreasesMinimumControlSpacing = true;
                     }
 
-                    if (minimumAngleOfProposedLegsInDegrees > minimumAngleOfCurrentLegsInDegrees) {
+                    if (minimumAngleOfProposedLegsInDegrees < minimumAngleOfCurrentLegsInDegrees) {
                         decreasesMinimumConsecutiveLegAngle = true;
                     }
 
@@ -557,6 +573,7 @@ export class SetCourse extends Component {
         return sortedControls;
     }
 
+    //TODO, combine this with the formula on game.js
     prepareControlDataForDrawingOnMap = (controls) => {
         if (!controls) { return; }
 
@@ -666,6 +683,10 @@ export class SetCourse extends Component {
 
     componentDidMount() {
         let context = this.context;
+
+        if (context.currentCourseMatchesMostRecentCourseImportedFromQRCode()) {
+            return
+        }
 
         const geometric = require("geometric");
         //TODO, make sure all controls are within boundary

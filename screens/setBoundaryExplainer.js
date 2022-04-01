@@ -13,22 +13,27 @@ export const SetBoundaryExplainer = ({ navigation, route }) => (
         <ScrollView>
             <ExplainerItem
                 icon={<MapMarkerIcon />}
+                title={strings.explainer.boundaryMarkerTitle}
                 text={strings.explainer.boundaryMarker}
             />
             <ExplainerItem
                 icon={<AddMarkerIcon height="50" width="50" />}
+                title={strings.explainer.addMarkerToolTitle}
                 text={strings.explainer.addMarkerTool}
             />
             <ExplainerItem
                 icon={<BoundaryIcon height="50" width="50" />}
+                title={strings.explainer.boundaryToolTitle}
                 text={strings.explainer.boundaryTool}
             />
             <ExplainerItem
                 icon={<DeleteIcon height="50" width="50" />}
+                title={strings.explainer.deleteToolTitle}
                 text={strings.explainer.deleteTool}
             />
             <ExplainerItem
                 icon={<LayerIcon margin={0} />}
+                title={strings.explainer.layerTitle}
                 text={strings.explainer.layer}
             />
         </ScrollView>

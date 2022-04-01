@@ -5,10 +5,9 @@ import { CourseBoundary } from '../components/courseBoundary'
 import { CustomMarker } from '../components/customMarker'
 import { distance, destVincenty, toDeg } from '../utils/location';
 import { FlagIcon, HelpIcon, LayerIcon, LocationIcon, MapControl, SettingsIcon, SkipIcon, } from '../assets/svgs';
-import { Polyline } from 'react-native-maps';
 import { startingLocation, } from '../globals'
 import { TouchableOpacity } from 'react-native-gesture-handler'; //https://github.com/react-native-maps/react-native-maps/issues/2780#issuecomment-562629150
-import MapView from 'react-native-maps';
+import MapView, { Polyline } from 'react-native-maps';
 import React, { Component } from 'react';
 
 
@@ -23,13 +22,13 @@ export class Game extends Component {
             errorMsg: null,
             legSegmentsForDrawing: [{ id: 1, coordinates: [{ latitude: 0, longitude: 0 }, { latitude: 1, longitude: 1 }] }],
             scaleFactor: 1,
-            showsUserLocation: false,
+            showsUserLocation: true,
             target: { latitude: startingLocation.latitude, longitude: startingLocation.longitude },
-            userLocation: { latitude: 0, longitude: 0 },
+            userLocation: {coords:{ latitude: 0, longitude: 0 }},
         }
     }
 
-    //TODO, combine this with the formula on game.js
+    //TODO, combine this with the formula on setCourse.js
     prepareControlDataForDrawingOnMap = (controls) => {
         if (!controls) { return; }
 
@@ -114,6 +113,8 @@ export class Game extends Component {
         };
 
         this.setState({ legSegmentsForDrawing: newLegs });
+        
+        //TODO Only do the below when necessary
         this.context.updateControls(newControls);
         this.context.updateCourseLengthInMeters(courseLengthInMeters);
 
@@ -127,83 +128,93 @@ export class Game extends Component {
     compareDistanceForStandardCourse() {
         let context = this.context;
         if (!this.state.currentlyShowingAlert && (this.state.distanceToNextControlInMeters.distanceInMeters < context.winningDistanceInMeters && this.state.distanceToNextControlInMeters.index == context.getNextControlToFindIndex())) {
-            this.props.navigation.push('ControlLogged', { controlIndex: context.getNextControlToFindIndex() })
-            context.markControlAsFound(context.getNextControlToFindIndex(), new Date());
+            this.handleWillMarkControlAsFound(context.getNextControlToFindIndex(), context.userLocation.coords)
         }
     }
 
     compareDistanceForScoreOCourse() {
         let context = this.context;
 
-        //console.log("Start___________")
+        let start = context.controls[0];
+
+        let hasFoundOrSkippedStart = start.status != "Not Found"
 
         let foundControls = [];//TODO this is not the right way to do this.  I'm checking every single control, then only using the information from the first one returned. Should be breaking out of the loop at that point instead
 
-        context.controls.forEach(async (control, index) => {
-
-            let distanceToControlInMeters = distance(control.coordinate.latitude, control.coordinate.longitude, context.userLocation.coords.latitude, context.userLocation.coords.longitude, "meters");
-
-            let shouldCheck = !this.state.currentlyShowingAlert && control.loggedTime == null
-
-            //console.log("index " + index)
-            //console.log("shouldCheck " + shouldCheck)
-            //console.log("canfinish " + context.canFinishCourse)
-
-            if (shouldCheck && distanceToControlInMeters < context.winningDistanceInMeters) {
-                foundControls.push(index)
+        if (!hasFoundOrSkippedStart) { //TODO find a cleaner way of writing this
+            let distanceToStartInMeters = distance(start.coordinate.latitude, start.coordinate.longitude, context.userLocation.coords.latitude, context.userLocation.coords.longitude, "meters");
+            if (distanceToStartInMeters < context.winningDistanceInMeters) {
+                foundControls.push(0)
             }
-        })
+        } else {
+            context.controls.forEach(async (control, index) => {
+
+                let distanceToControlInMeters = distance(control.coordinate.latitude, control.coordinate.longitude, context.userLocation.coords.latitude, context.userLocation.coords.longitude, "meters");
+
+                let shouldCheck = !this.state.currentlyShowingAlert && control.loggedTime == null
+
+                // console.log("index " + index)
+                // console.log("shouldCheck " + shouldCheck)
+                // console.log("canfinish " + context.canFinishCourse)
+
+                if (shouldCheck && distanceToControlInMeters < context.winningDistanceInMeters) {
+                    foundControls.push(index)
+                }
+            })
+        }
 
         if (foundControls.length > 0) {
-            this.handleFoundControl(foundControls[0]);
+            this.handleFoundControl(foundControls[0], context.userLocation.coords);
         }
     }
 
-    async handleFoundControl(index) {
+    async handleFoundControl(index, coordinates) {
         let context = this.context;
 
         //(index)
 
         if (context.controls[index].controlType != "Finish") {
-            this.handleWillMarkControlAsFound(index);
-        } else if (context.canFinishCourse) {{
+            this.handleWillMarkControlAsFound(index, coordinates);
+        } else if (context.canFinishCourse) {
+            {
 
-            //console.log(context.lastTimeSkippedFinished)
-            //console.log(context.lastTimeSkippedFinished + 15000)
-            //console.log(new Date())
-            //console.log(context.lastTimeSkippedFinished + 15000 < new Date())
+                // console.log(context.lastTimeSkippedFinished)
+                // console.log(context.lastTimeSkippedFinished + 15000)
+                // console.log(new Date())
+                // console.log(context.lastTimeSkippedFinished + 15000 < new Date())
 
-            if (context.hasLoggedAllRegularControls()) {
-                this.handleWillMarkControlAsFound(index);
-            } else if (context.lastTimeSkippedFinished + 15000 < new Date()) {
-                this.setState({ currentlyShowingAlert: true });
-                Alert.alert(
-                    "Finish Early?",
-                    "You reached the Finish, but you have not found all the controls.  Do you want to end now?",
-                    [{
-                        text: "Cancel",
-                        style: "cancel",
-                        onPress: () => {
-                            context.updateLastTimeSkippedFinished();
-                            this.setState({ currentlyShowingAlert: false });
-                        }
-                    }, {
-                        text: "End Now",
-                        style: "destructive",
-                        onPress: () => {
-                            this.handleWillMarkControlAsFound(index)
-                            this.setState({ currentlyShowingAlert: false });
-                        }
-                    }],
-                )
-            }}
+                if (context.hasLoggedAllRegularControls()) {
+                    this.handleWillMarkControlAsFound(index, coordinates);
+                } else if (context.lastTimeSkippedFinished + 15000 < new Date()) {
+                    this.setState({ currentlyShowingAlert: true });
+                    Alert.alert(
+                        "Finish Early?",
+                        "You reached the Finish, but you have not found all the controls.  Do you want to end now?",
+                        [{
+                            text: "Cancel",
+                            style: "cancel",
+                            onPress: () => {
+                                context.updateLastTimeSkippedFinished();
+                                this.setState({ currentlyShowingAlert: false });
+                            }
+                        }, {
+                            text: "End Now",
+                            style: "destructive",
+                            onPress: () => {
+                                this.handleWillMarkControlAsFound(index, coordinates)
+                                this.setState({ currentlyShowingAlert: false });
+                            }
+                        }],
+                    )
+                }
+            }
         }
     }
 
-    async handleWillMarkControlAsFound(index) {
-        //console.log("handleWillMarkControlAsFound"+index)
+    async handleWillMarkControlAsFound(index, coordinates) {
+        this.setState({ showsUserLocation: false })
         this.props.navigation.push('ControlLogged', { controlIndex: index })
-        await this.context.markControlAsFound(index, new Date());
+        await this.context.markControlAsFound(index, new Date(), coordinates);
     }
 
 
@@ -238,13 +249,21 @@ export class Game extends Component {
     componentWillUnmount() { }
 
     componentDidMount() {
+        this.context.clearLoggedControls();
+        this.context.clearUserPath();
         this.handleUpdate();
     }
 
     render() {
         let locationText = 'Waiting...';
         let context = this.context;
-        let progressText = `Find next: ${context.controls[context.getNextControlToFindIndex()].textLabel}`;
+
+        let progressText;
+        if (context.courseType == "Standard" || context.controls[context.getNextControlToFindIndex()].controlType != 'Control') {
+            progressText = `Find next: ${context.controls[context.getNextControlToFindIndex()].textLabel}`;
+        } else {
+            progressText = `Found: ${context.getNumberOfFoundRegularControls()} of ${context.getNumberOfRegularControls()}`;
+        }
 
         if (this.state.errorMsg) {
             locationText = this.state.errorMsg;
@@ -271,12 +290,11 @@ export class Game extends Component {
                                 let size;
                                 if (context.courseType == "Standard") {
                                     color = context.getNextControlToFindIndex() == index ? colors.red : color
-                                    size = context.getNextControlToFindIndex() == index ? 34 : null
+                                    //size = context.getNextControlToFindIndex() == index ? 34 : null
                                 }
 
                                 return <CustomMarker
                                     coordinate={control.coordinate}
-                                    onDragEnd={(e) => { this.setControlLocation(index, e.nativeEvent.coordinate) }}
                                     key={'Index: ' + index + '; CustomMarkerControl:' + JSON.stringify(control)}
                                     id={'Index: ' + index + '; Control:' + JSON.stringify(control)}
                                     anchor={{ x: .5, y: .5 }}
@@ -334,11 +352,11 @@ export class Game extends Component {
                             })
                             }
                         </MapView>
-                        {context.courseType == "Standard" && <View style={styles.mapTextContainer}>
+                        <View style={styles.mapTextContainer}>
                             <Text style={styles.mapText}>
                                 {progressText}
                             </Text>
-                        </View>}
+                        </View>
                         <View style={{ position: 'absolute', alignSelf: 'flex-start' }}>
                             <TouchableOpacity onPress={() => { this.props.navigation.navigate('GameExplainer') }}>
                                 <HelpIcon />
@@ -364,9 +382,7 @@ export class Game extends Component {
                                         text: "End now",
                                         style: "destructive",
                                         onPress: () => {
-                                            context.markControlAsSkipped(index, new Date(), () => {
-                                                this.props.navigation.navigate('ControlLogged', { controlIndex: index })
-                                            });
+                                            this.props.navigation.navigate('Results')
                                             this.setState({ currentlyShowingAlert: false });
 
                                         },

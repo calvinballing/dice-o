@@ -3,7 +3,7 @@ export const AppContext = React.createContext();
 import { CUSTOM_MAP_STYLE } from './styles/styles';
 import { distance, } from './utils/location';
 import { strings } from './strings';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 class SettingsContext extends React.Component {
   state = {
     activeBoundaryIndex: 3,
@@ -21,7 +21,7 @@ class SettingsContext extends React.Component {
         textLabel: strings.context.start,
         mapLabelBearing: 0,
         status: strings.context.notFound,
-        loggedTime: false,
+        loggedTime: null,
         controlType: strings.context.start,
       },
       {
@@ -29,7 +29,7 @@ class SettingsContext extends React.Component {
         mapLabel: '1',
         textLabel: '1',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -38,7 +38,7 @@ class SettingsContext extends React.Component {
         mapLabel: '2',
         textLabel: '2',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -47,7 +47,7 @@ class SettingsContext extends React.Component {
         mapLabel: '3',
         textLabel: '3',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -56,7 +56,7 @@ class SettingsContext extends React.Component {
         mapLabel: '4',
         textLabel: '4',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -65,7 +65,7 @@ class SettingsContext extends React.Component {
         mapLabel: '5',
         textLabel: '5',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -74,7 +74,7 @@ class SettingsContext extends React.Component {
         mapLabel: '6',
         textLabel: '6',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -83,7 +83,7 @@ class SettingsContext extends React.Component {
         mapLabel: '7',
         textLabel: '7',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -92,7 +92,7 @@ class SettingsContext extends React.Component {
         mapLabel: '8',
         textLabel: '8',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -101,7 +101,7 @@ class SettingsContext extends React.Component {
         mapLabel: '9',
         textLabel: '9',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -110,7 +110,7 @@ class SettingsContext extends React.Component {
         mapLabel: '10',
         textLabel: '10',
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: 'Control',
         status: strings.context.notFound,
       },
@@ -119,26 +119,34 @@ class SettingsContext extends React.Component {
         mapLabel: '',
         textLabel: strings.context.finish,
         mapLabelBearing: 0,
-        loggedTime: false,
+        loggedTime: null,
         controlType: strings.context.finish,
         status: 'Not Found',
       }],
-      courseLengthInMeters: 0,
-      courseType: "Standard",
-      distanceToNextControlInMeters: 1000,
-      customMapStyle: CUSTOM_MAP_STYLE,
-      lastTimeSkippedFinished: Number.NEGATIVE_INFINITY,
-      mapType: 'standard',
-      poleOfInaccessibilityLatitude: 0,
-      poleOfInaccessibilityLongitude: 0,
-      randomness: 2000,
-      timesAround: 1,
-      targetControlID: 1,
-      targetCourseLengthInK: 3,
-      targetCourseLengthToleranceInK: .05,
+    courseImportedFromQRCode: {boundary:{},controls:{},courseType:{}},
+    courseLengthInMeters: 0,
+    courseType: "Standard",
+    distanceIntervalInMeters: 2,
+    distanceToNextControlInMeters: 1000,
+    customMapStyle: CUSTOM_MAP_STYLE,
+    hasAcceptedDisclaimer: false,    
+    lastTimeSkippedFinished: Number.NEGATIVE_INFINITY,
+    lastUserPathUpdateTime: Number.NEGATIVE_INFINITY,
+    locationWatcher: null,
+    mapType: 'standard',
+    poleOfInaccessibilityLatitude: 0,
+    poleOfInaccessibilityLongitude: 0,
+    pollingIntervalInMilliseconds: 1500,
+    randomness: 2000,
+    recordingIntervalInMilliseconds: 1000,
+    timesAround: 1,
+    targetControlID: 1,
+    targetCourseLengthInK: 3,
+    targetCourseLengthToleranceInK: .05,
     units: 'km',
     userLocation: null,
-    vibrate: false,
+    userPath: [],
+    vibrate: true,
     winningDistanceInMeters: 15,
     toggleVibrate: () => {
       this.setState({ vibrate: !this.state.vibrate });
@@ -245,9 +253,22 @@ class SettingsContext extends React.Component {
 
       return distance(lat1, lon1, lat2, lon2, 'meters');
     },
+    getDistanceBetweenLogLocationsOfControlsInMeters: (index1, index2) => {
+      //TODO error checking if index is out of bounds
+      let lat1 = this.state.controls[index1].loggedCoordinates.latitude
+      let lon1 = this.state.controls[index1].loggedCoordinates.longitude
+      let lat2 = this.state.controls[index2].loggedCoordinates.latitude
+      let lon2 = this.state.controls[index2].loggedCoordinates.longitude
+
+      return distance(lat1, lon1, lat2, lon2, 'meters');
+    },
+    getDistanceBetweenLogLocationsOfControlsInFeet: (index1, index2) => {
+      //TODO error checking if index is out of bounds
+      return this.convertMetersToFeet(this.state.getDistanceBetweenLogLocationsOfControlsInMeters(index1, index2))
+    },
     getDistanceBetweenControlsInFeet: (index1, index2) => {
       //TODO error checking if index is out of bounds
-      return this.convertMetersToFeet(this.state.getDistanceBetweenControlsInMeters(index1,index2))
+      return this.convertMetersToFeet(this.state.getDistanceBetweenControlsInMeters(index1, index2))
     },
     getLegLengthInMeters: (index) => {
       if (index == 0) {
@@ -265,16 +286,16 @@ class SettingsContext extends React.Component {
     },
     getMapRegion: () => {
       if (this.state.boundaryCoordinates[0]) {
-          let maxDelta = Math.max(this.state.getBoundaryWidth(), this.state.getBoundaryHeight());
-          let center = this.state.getBoundaryCenter()
-          let margin = .001
+        let maxDelta = Math.max(this.state.getBoundaryWidth(), this.state.getBoundaryHeight());
+        let center = this.state.getBoundaryCenter()
+        let margin = .001
 
-          return {
-              latitude: center.latitude,
-              longitude: center.longitude,
-              latitudeDelta: maxDelta + margin,
-              longitudeDelta: maxDelta + margin,
-          }
+        return {
+          latitude: center.latitude,
+          longitude: center.longitude,
+          latitudeDelta: maxDelta + margin,
+          longitudeDelta: maxDelta + margin,
+        }
       }
     },
     getNextControlToFindIndex: () => {
@@ -309,20 +330,46 @@ class SettingsContext extends React.Component {
     getNumberOfRegularControls: () => {
       return (this.state.controls.length - 2);
     },
-    markControlAsFound: (index, time) => {
+    getNumberOfFoundRegularControls: () => {
+      let numberOfFoundRegularControls = 0;
+      this.state.controls.forEach((control) => {
+        if (control.controlType == "Control" && (control.status == strings.context.found)) {
+          numberOfFoundRegularControls += 1; 
+        }
+      })
+
+      return numberOfFoundRegularControls;
+    },
+    markControlAsFound: (index, time, coordinates) => {
       let newControls = JSON.parse(JSON.stringify(this.state.controls));
       newControls[index].loggedTime = time;
+      newControls[index].loggedCoordinates = coordinates;
       newControls[index].status = strings.context.found;
       this.setState({ controls: newControls },
-        () => {if (this.state.controls[index].controlType == "Control") {
-          this.setState({ canFinishCourse: true })
-          this.state.removeLastTimeSkippedFinish({ lastTimeSkippedFinished: null })
-        }}
-        )
+        () => {
+
+          if (this.state.controls[index].controlType == "Start") {
+            this.state.clearUserPath();
+          }
+
+          if (this.state.controls[index].controlType == "Control") {
+            this.setState({ canFinishCourse: true })
+            this.state.removeLastTimeSkippedFinish({ lastTimeSkippedFinished: null })
+          }
+        }
+      )
       
+      let milliseconds = new Date(time) 
+      milliseconds = milliseconds.getTime()
+
+      // console.log("time")
+      // console.log(milliseconds)
+      this.state.addToUserPath(coordinates,milliseconds)
+      // TODO, investigate whether the start gets logged, or gets cleared
+
     },
-    markControlAsSkipped: (index, time, callback) => {
-      //TODO write this - need to record that the control was skipped, when, and where
+    markControlAsSkipped: (index, time, coordinates, callback) => {
+      // TODO write this - need to record that the control was skipped, when, and where
       let newControls = JSON.parse(JSON.stringify(this.state.controls));
       newControls[index].loggedTime = time;
       newControls[index].status = strings.context.skipped;
@@ -333,6 +380,7 @@ class SettingsContext extends React.Component {
         this.setState({ controls: newControls }, callback)
       }
     },
+
 
     /*
     
@@ -435,8 +483,6 @@ class SettingsContext extends React.Component {
 */
 
 
-
-
     updateActiveBoundaryIndex: (activeBoundaryIndex) => {
       this.setState({ activeBoundaryIndex: activeBoundaryIndex })
     },
@@ -455,8 +501,25 @@ class SettingsContext extends React.Component {
     updateCourseType: (courseType) => {
       this.setState({ courseType: courseType })
     },
+    updateMostRecentCourseImportedFromQRCode: (boundary, controls, courseType) => {
+      this.state.updateBoundaryCoordinates(boundary);
+      this.state.updateControls(controls);
+      this.state.updateCourseType(courseType);
+      this.setState({ courseImportedFromQRCode: {boundary:boundary,controls:controls,courseType:courseType }});
+    },
+    currentCourseMatchesMostRecentCourseImportedFromQRCode: () => {
+
+      return (
+        this.state.courseImportedFromQRCode.boundary == this.state.boundaryCoordinates &&
+        this.state.courseImportedFromQRCode.controls == this.state.controls &&
+        this.state.courseImportedFromQRCode.courseType == this.state.courseType
+      )
+    },
     updateCustomMapStyle: (customMapStyle) => {
       this.setState({ customMapStyle: customMapStyle })
+    },
+    updateDistanceIntervalInMeters: (distanceIntervalInMeters) => {
+      this.setState({ distanceIntervalInMeters: distanceIntervalInMeters })
     },
     updateDistanceToNextControlInMeters: (distanceToNextControlInMeters) => {
       this.setState({ distanceToNextControlInMeters: distanceToNextControlInMeters })
@@ -466,11 +529,17 @@ class SettingsContext extends React.Component {
       newControls[this.state.controls.length - 1].coordinate = coordinate;
       this.setState({ controls: newControls })
     },
+    updateHasAcceptedDisclaimer: (hasAcceptedDisclaimer) => {
+      this.setState({ hasAcceptedDisclaimer: hasAcceptedDisclaimer })
+    },
     removeLastTimeSkippedFinish: () => {
       this.setState({ lastTimeSkippedFinished: Number.NEGATIVE_INFINITY })
     },
     updateLastTimeSkippedFinished: () => {
       this.setState({ lastTimeSkippedFinished: Date.now() })
+    },
+    updateLocationWatcher: (locationWatcher) => {
+      this.setState({locationWatcher:locationWatcher})
     },
     updateMapType: (mapType) => {
       this.setState({ mapType: mapType })
@@ -516,6 +585,9 @@ class SettingsContext extends React.Component {
     updatePoleOfInaccessibilityLongitude: (poleOfInaccessibilityLongitude) => {
       this.setState({ poleOfInaccessibilityLongitude: poleOfInaccessibilityLongitude })
     },
+    updatePollingIntervalInMilliseconds: (pollingIntervalInMilliseconds) => {
+      this.setState({ pollingIntervalInMilliseconds: pollingIntervalInMilliseconds })
+    },
     updateRandomness: (randomness) => {
       this.setState({ randomness: randomness })
     },
@@ -536,12 +608,64 @@ class SettingsContext extends React.Component {
     updateUnits: (units) => {
       this.setState({ units: units })
     },
+    addToUserPath: (coordinates,timestamp) => {
+      let userPath = this.state.userPath
+      userPath.push({latitude:coordinates.latitude,longitude:coordinates.longitude})
+
+      
+      // console.log("userPath")
+      // console.log(userPath)
+
+      this.setState({ userPath: userPath })
+      this.setState({ lastUserPathUpdateTime: timestamp })
+    },
     updateUserLocation: (userLocation) => {
       this.setState({ userLocation: userLocation })
+
+
+      // console.log(userLocation.timestamp)
+      //TODO add logic to only record the user location if they have found the start control
+
+      
+      if(userLocation.timestamp > this.state.lastUserPathUpdateTime + this.state.recordingIntervalInMilliseconds && userLocation.coords.accuracy < 15) {
+        this.state.addToUserPath(userLocation.coords,userLocation.timestamp)
+      }
+
+      if (userLocation && this.state.courseType == "Standard") {
+        this.state.updateDistanceToNextControlInMeters(
+          distance(
+            userLocation.coords.latitude, 
+            userLocation.coords.longitude, 
+            this.state.controls[this.state.getNextControlToFindIndex()].coordinate.latitude, 
+            this.state.controls[this.state.getNextControlToFindIndex()].coordinate.longitude, 
+            "meters"
+            )
+          );
+    }
+
     },
     updateWinningDistanceInMeters: (winningDistanceInMeters, callback) => {
       this.setState({ winningDistanceInMeters: winningDistanceInMeters })
       if (callback) callback();
+    },
+    clearLoggedControls: () => {
+      let newControls = JSON.parse(JSON.stringify(this.state.controls));
+
+      newControls.forEach((newControl) => {
+        newControl.loggedTime = null;
+        delete newControl.loggedCoordinates;
+        newControl.status = strings.context.notFound;
+      })
+
+      this.setState({ controls: newControls },
+        () => {
+          this.setState({ canFinishCourse: false });
+          this.state.removeLastTimeSkippedFinish({ lastTimeSkippedFinished: null })
+        })
+
+    },
+    clearUserPath: () => {
+      this.setState({ userPath: [] })
     },
     cycleMapType: () => {
       if (this.state.mapType == 'satellite') {
@@ -572,6 +696,24 @@ class SettingsContext extends React.Component {
 
       throw ("unknown mapType (please use satellite, hybrid, standard, or terrain)");
     },
+    storeData: async () => {
+      try {
+        const jsonState = JSON.stringify(this.state)
+        await AsyncStorage.setItem('@context', jsonState)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    loadDataIntoState: async () => {
+      try {
+        const jsonState = await AsyncStorage.getItem('@context')
+        if (jsonState != null) {
+          this.setState({ ...JSON.parse(jsonState) });
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
   }
 
   convertMetersToMiles(meters) {
@@ -593,6 +735,8 @@ class SettingsContext extends React.Component {
   convertMilesToFeet(miles) {
     return miles * 5280;
   }
+
+
 
   render() {
     return (

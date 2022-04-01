@@ -50,9 +50,13 @@ export class SetStart extends Component {
                 context.updateStart({ latitude: context.getBoundaryCenter().latitude, longitude: context.getBoundaryCenter().longitude })
             }
         }
+
+        context.storeData();
     }
 
-    componentWillUnmount() { }
+    componentWillUnmount() { 
+        this.context.storeData();
+    }
 
     componentDidUpdate() { }
 

@@ -36,6 +36,9 @@ export class SetFinish extends Component {
         if (context.controls[context.controls.length - 1].coordinate.latitude == 1 || !finishIsInPolygon) {//TODO improve this
             context.updateFinish({ latitude: context.controls[0].coordinate.latitude, longitude: context.controls[0].coordinate.longitude })
         }
+
+        context.storeData();
+
     }
 
     componentWillUnmount() { }

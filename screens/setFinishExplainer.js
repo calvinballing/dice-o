@@ -12,10 +12,17 @@ export const SetFinishExplainer = ({ navigation, route }) => (
         <ScrollView>
             <ExplainerItem
                 icon={<MapControl controlType="Finish" height="50" width="50" isIcon={true} />}
-                text="Tap anywhere on the map to place the Finish there, or press and hold the double-circle to drag the Finish to a different location."
+                title={strings.explainer.setFinishTitle}
+                text={strings.explainer.setFinish}
+            />
+            <ExplainerItem
+                icon={<MapControl controlType="Start" height="50" width="50" isIcon={true} />}
+                title={strings.explainer.moveStartTitle}
+                text={strings.explainer.moveStart}
             />
             <ExplainerItem
                 icon={<LayerIcon margin={0} />}
+                title={strings.explainer.layerTitle}
                 text={strings.explainer.layer}
             />
         </ScrollView>

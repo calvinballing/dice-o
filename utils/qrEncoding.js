@@ -51,7 +51,6 @@ function decodeCoordinate(coordinate) {
 }
 
 export function decode(encodedData) {
-
     if(encodedData.substr(0,1) != "0" && encodedData.substr(0,1) != "1") {
         throw 'Unknown Encoding Type.  Expected "0" or "1"'
     } 

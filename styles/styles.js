@@ -3,14 +3,17 @@ import { StyleSheet, Dimensions } from 'react-native';
 export const colors = {
   linkBlue: '#1559b7',
   orange: "#ef6c0c",
+  darkOrange: "#C2570A",
   purple: '#de519b',
   red: 'red',
   grey: 'grey',
   gray: 'grey',
   transparentWhite: '#fff8',
+  transparent: '#0000',
   white: 'white',
 }
 
+// Note, controlTextContainer > borderColor: Adding a border to this is a hack to keep it the same size as controlTextContainerActive.  This prevents an Android bug caused by making the icons stop watching updates, and not picking up on the size change.
 export const styles = StyleSheet.create({
   activeTabStyle: {
     backgroundColor: colors.orange
@@ -36,6 +39,23 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 10,
   },
+  secondaryButton: {
+    padding: 10,
+    borderRadius: 5,
+    height: 75,
+    backgroundColor: colors.white,
+    borderColor: colors.orange,
+    borderWidth: 1,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+  },
+  buttonLabel: {
+      marginHorizontal: 10,
+      marginTop: 20,
+      fontSize: 18,
+  },
   buttonWithoutFixedHeight: {
     padding: 5,
     borderRadius: 20,
@@ -47,11 +67,15 @@ export const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 26,
-    color: 'white'
+    color: colors.white
+  },
+  secondaryButtonText: {
+    fontSize: 20,
+    color: colors.black
   },
   buttonWithoutFixedHeightText: {
     fontSize: 40,
-    color: 'white'
+    color: colors.white
   },
   centeredContainer: {
     justifyContent: 'center',
@@ -59,12 +83,14 @@ export const styles = StyleSheet.create({
   },
   controlText: {
     fontSize: 25,
-    color: '#de519b',
+    color: colors.purple,
   },
   controlTextContainer: {
     backgroundColor: colors.transparentWhite,
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
+    borderWidth: 2,
+    borderColor: colors.transparent,
     alignItems: 'center',
     borderRadius: 4,
     justifyContent: 'center',
@@ -77,7 +103,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 4,
     justifyContent: 'center',
-    borderColor: "black",
+    borderColor: colors.black,
     borderWidth: 2,
   },
   disclaimerText: {
@@ -132,6 +158,20 @@ export const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height - 80,
   },
+  pickerTwo: {
+    backgroundColor:"#fff",
+    borderRadius:20,
+    height: 132,
+    marginHorizontal:40,
+  },
+  pickerTwoItems: {
+    height: 132,
+  },
+  picker: {
+    backgroundColor:"#fff",
+    borderRadius:20,
+    marginHorizontal:40,
+  },
   slider: {
     width: "100%",
     marginLeft: 10,
@@ -164,7 +204,6 @@ export const styles = StyleSheet.create({
   tableContainer: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: 'white'
   },
   tableHead: {
     height: 40,
@@ -175,7 +214,7 @@ export const styles = StyleSheet.create({
     color: "white"
   },
   tableWrapper: { flexDirection: 'row' },
-  tableDataWrapper: { marginTop: -1 },
+  //tableDataWrapper: { marginTop: -1 },
   tableTitle: { flex: 1, backgroundColor: '#f6f8fa' },
   tableRow: { height: 28 },
   tableText: { textAlign: 'center' }
